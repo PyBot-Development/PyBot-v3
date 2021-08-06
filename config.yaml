@@ -1,0 +1,19 @@
+# Account
+bot-token: Token
+bot-application-account: True/False
+
+# Settings
+prefix: '!'
+cooldown: 2
+
+# Twitter
+Twitter_Consumer_Key:
+Twitter_Consumer_Secret:
+Twitter_Access_Token:
+Twitter_Access_Token_Secret: 
+
+# Errors
+no-perms: "\U0001f511 You have no permissions to do that."
+command-on-cooldown: "\U0001F552 That command is ratelimited, try again in {:.2f}s."
+command-not-found: "\u2753 Sorry, but I don't recognize that command."
+unknown: "\u2757 {}"
