@@ -19,11 +19,12 @@ import tweepy
 import os
 import sys
 import json
+import re
 try: import quotes
 except: from resources import quotes
-
 try: import processing
 except: from resources import processing
+
 startup_time=datetime.utcnow().strftime("%c")
 path=f"{__file__}".replace("\\resources\\bot.py", "").replace("/resources/bot.py", "")
 config=open(f"{path}/config.yaml")
@@ -182,7 +183,7 @@ async def on_command_error(ctx, error):
     else:
         print(f"{Back.BLACK}{Fore.WHITE}{date}{Style.RESET_ALL} {Fore.RED}{Back.LIGHTBLACK_EX}[ERROR]{Style.RESET_ALL} {error}")
         await ctx.send(embed=discord.Embed(description=config.get("unknown").format(error), color=colours.blue), delete_after=10)
-        #raise error
+        raise error
         return
 no_alts = False
 try:
@@ -276,8 +277,8 @@ async def rate(ctx, user, *, rest_of_the_text=""):
 @bot.command(aliases=["cf"])
 async def coinflip(ctx):
     async with ctx.typing():
-        if(random.randint(0, 1)==1): await ctx.send(file=discord.File(f"{path}/data/coinflip/heads.gif"), content='It landed on heads')
-        else: await ctx.send(file=discord.File(f"{path}/data/coinflip/tails.gif"), content='It landed on tails')
+        if(random.randint(0, 1)==1): embed=discord.Embed(description="It landed on Heads!", color=colours.blue); embed.set_image(url="attachment://heads.gif"); await ctx.send(file=discord.File(f"{path}/data/coinflip/heads.gif"), embed=embed)
+        else: embed=discord.Embed(description="It landed on Tails!", color=colours.blue); embed.set_image(url="attachment://tails.gif"); await ctx.send(file=discord.File(f"{path}/data/coinflip/tails.gif"), embed=embed)
 @c_chck()
 @cooldown(1, _cooldown, BucketType.user)
 @bot.command(aliases=["video", "youtube"])
@@ -389,11 +390,12 @@ Reason: `{reason}`""",color=colours.blue))
 async def tempban(ctx, user, time, *, reason="Not Specified."):
     now = datetime.now()
     timestamp = datetime.timestamp(now)
-    time=time.replace("s", "*1").replace("m", "*60").replace("h", "*60*60").replace("d", "*86400")
-    time=int(eval(time))
+    time=time.replace("s", "*1+").replace("m", "*60+").replace("h", "*(60*60)+").replace("d", "*86400+").replace("w", "*604800+")
+    time=int(eval(time[:-1]))
     timestamp=timestamp+time
     time=datetime.fromtimestamp(timestamp)
     reason=reason.replace("'", "\\'")
+
     user = await commands.UserConverter().convert(ctx, user)
     data = c.execute(f'SELECT * FROM users WHERE id={user.id}')
     con.commit()
@@ -816,7 +818,7 @@ def init():
     print(f"""
 ┌───────────────────┐
 │{Back.BLUE}{Fore.LIGHTGREEN_EX } Welcome!          {Style.RESET_ALL}│
-│{Back.BLUE}{Fore.WHITE         } Version 1.0.5     {Style.RESET_ALL}│
+│{Back.BLUE}{Fore.WHITE         } Version 1.0.6     {Style.RESET_ALL}│
 │{Back.BLUE}{Fore.YELLOW        }                   {Style.RESET_ALL}│
 │{Back.BLUE}{Fore.YELLOW        } Let's cum!        {Style.RESET_ALL}│
 └───────────────────┘{Style.RESET_ALL}
