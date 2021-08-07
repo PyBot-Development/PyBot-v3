@@ -394,7 +394,6 @@ async def tempban(ctx, user, time, *, reason="Not Specified."):
     timestamp=timestamp+time
     time=datetime.fromtimestamp(timestamp)
     reason=reason.replace("'", "\\'")
-
     user = await commands.UserConverter().convert(ctx, user)
     data = c.execute(f'SELECT * FROM users WHERE id={user.id}')
     con.commit()
