@@ -763,6 +763,35 @@ async def prefix(ctx, __prefix):
     bot.command_prefix=commands.when_mentioned_or(__prefix)
     await ctx.send(embed=discord.Embed(description="Done", color=colours.blue), delete_after=10)
 @c_chck()
+@bot.command()
+@cooldown(1,_cooldown, BucketType.user)
+async def status(ctx, activity, *, _status):
+    _status = _status.split("--url ")
+    status = []
+    for item in _status:
+        status.append(item)
+    status.append("https://www.youtube.com/watch?v=dQw4w9WgXcQ/")
+    if activity.lower()=="streaming":
+        await bot.change_presence(activity=discord.Streaming(name=status[0], url=status[1]))
+    elif activity.lower()=="playing":
+        await bot.change_presence(activity=discord.Game(name=status[0]))
+    elif activity.lower()=="listening":
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=status[0]))
+    elif activity.lower()=="watching":
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status[0]))
+    else:
+        support.cmd_help(ctx.command, _prefix, len(bot.commands))
+    await ctx.send(embed=discord.Embed(description="Done", color=colours.blue), delete_after=10)
+@c_chck()
+@bot.command(aliases=["av", "pfp"])
+async def avatar(ctx, user=None):
+    try: user = await commands.UserConverter().convert(ctx, user)
+    except: user = ctx.message.author
+    await user.avatar_url.save(f"{path}/data/temp/image.gif")
+    embed=discord.Embed(description="Profile Picture", color=colours.blue)
+    embed.set_image(url="attachment://image.gif")
+    await ctx.send(file=discord.File(f"{path}/data/temp/image.gif"),embed=embed)
+@c_chck()
 @c_achck()
 @bot.command()
 @cooldown(1,_cooldown, BucketType.user)
@@ -818,7 +847,7 @@ def init():
     print(f"""
 ┌───────────────────┐
 │{Back.BLUE}{Fore.LIGHTGREEN_EX } Welcome!          {Style.RESET_ALL}│
-│{Back.BLUE}{Fore.WHITE         } Version 1.0.6     {Style.RESET_ALL}│
+│{Back.BLUE}{Fore.WHITE         } Version 1.0.8     {Style.RESET_ALL}│
 │{Back.BLUE}{Fore.YELLOW        }                   {Style.RESET_ALL}│
 │{Back.BLUE}{Fore.YELLOW        } Let's cum!        {Style.RESET_ALL}│
 └───────────────────┘{Style.RESET_ALL}

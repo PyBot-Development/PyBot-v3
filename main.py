@@ -3,7 +3,10 @@ from resources import bot
 import sys
 import colorama
 
-__version__ = "1.0.6"
+# Setting up variables
+__version__ = "1.0.8"
 sys.dont_write_bytecode = True
 bot = threading.Thread(target=bot.run())
+# Setting up variables
+
 bot.start()

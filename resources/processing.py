@@ -43,6 +43,22 @@ def war(image):
     cv2.imwrite(f'{path}\\data\\temp\\result.png'.replace("\\", "/"), added_image)
     return(f'{path}\\data\\temp\\result.png'.replace("\\", "/"))
 
+def cum(image):
+    im = Image.open(image)
+    im.seek(0)
+    im.save(image)
+    im.close()
+
+    background = cv2.imread(image)
+    overlay = cv2.imread(f'{path}/data/processing/cum.png'.replace("\\", "/"))
+
+    background = cv2.resize(background, (720,720))
+    overlay = cv2.resize(overlay, (720,720))
+
+    added_image = cv2.addWeighted(background,.7,overlay,.1,0)
+    cv2.imwrite(f'{path}\\data\\temp\\result.png'.replace("\\", "/"), added_image)
+    return(f'{path}\\data\\temp\\result.png'.replace("\\", "/"))
+
 def tts(txt, languag):
     speech = gTTS(text = u'{}'.format(txt), lang = languag, slow = False)
     speech.save(f"{path}/data/temp/tts.mp3")
