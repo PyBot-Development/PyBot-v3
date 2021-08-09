@@ -185,6 +185,7 @@ async def on_command_error(ctx, error):
         await ctx.send(embed=discord.Embed(description=config.get("unknown").format(error), color=colours.blue), delete_after=10)
         raise error
         return
+
 no_alts = False
 try:
     try: alts = open(f"{path}/data/alts/mc.txt.txt", "r")
@@ -197,6 +198,21 @@ try:
 except:
     no_alts = True
     print(f"{Fore.LIGHTWHITE_EX}{Back.RED}[E] No minecraft alts file found.{Style.RESET_ALL}")
+
+no_proxy = False
+try:
+    try: proxies = open(f"{path}/data/alts/socks4.txt.txt", "r")
+    except: proxies = open(f"{path}/data/alts/raw/socks4.txt", "r")
+    proxiez = []
+    for item in proxies:
+        item = item.split("\n")
+        proxiez.append(item[0])
+    proxies.close()
+except:
+    no_proxy = True
+    print(f"{Fore.LIGHTWHITE_EX}{Back.RED}[E] No socks4 file found.{Style.RESET_ALL}")
+
+
 @c_chck()
 @bot.command(aliases=["?"])
 @cooldown(1, _cooldown, BucketType.user)
@@ -236,6 +252,22 @@ async def alt(ctx):
         await channel.send(embed=discord.Embed(description=f"||{alt}||", color=colours.blue))
         alts_mc.remove(alt)
         alts = open(f"{path}/data/alts/mc.txt", "w+")
+        alts.seek(0)
+        for item in alts_mc:
+            alts.write(f"{item}\n")
+        alts.truncate()
+        alts.close()
+@c_chck()
+@bot.command(aliases=["socks4"])
+@cooldown(1, 60, BucketType.user)
+async def proxy(ctx):
+    async with ctx.typing():
+        if no_proxy == True: await ctx.send(embed=discord.Embed(description="No Alts left :(", color=colours.blue), delete_after=10); return
+        prox = random.choice(proxiez)
+        channel = await ctx.message.author.create_dm()
+        await channel.send(embed=discord.Embed(description=f"||{prox}|| socks4", color=colours.blue))
+        proxiez.remove(prox)
+        alts = open(f"{path}/data/alts/socks4.txt", "w+")
         alts.seek(0)
         for item in alts_mc:
             alts.write(f"{item}\n")
@@ -623,7 +655,7 @@ async def nick(ctx, *, name):
 async def iq(ctx, *,user: discord.User=None):
         iq_size = random.uniform(0.00, 200.00)
         if user == None: user = ctx.message.author
-        if user.id==846298981797724161:
+        if user.id==846298981797724161 or user.id == 818236132578820126:
             iq_size = 200.00
         colour_hex = '%02x%02x%02x' % ( int((iq_size/2)*2.55), int((iq_size/2)*2.51), int((iq_size/2)*1.91) ); colour = int(colour_hex, 16)
         embed=discord.Embed(description=f"{user} IQ is {iq_size:.2f}.", color=colour)
@@ -783,6 +815,13 @@ async def status(ctx, activity, *, _status):
         support.cmd_help(ctx.command, _prefix, len(bot.commands))
     await ctx.send(embed=discord.Embed(description="Done", color=colours.blue), delete_after=10)
 @c_chck()
+@bot.command()
+@cooldown(1,_cooldown, BucketType.user)
+async def embed(ctx, description=None, color=None, title=None,):
+    colour = int(color.replace("#", ""), 16)
+    await ctx.send(embed=discord.Embed(title=title, description=description, color=colour))
+
+@c_chck()
 @bot.command(aliases=["av", "pfp"])
 async def avatar(ctx, user=None):
     try: user = await commands.UserConverter().convert(ctx, user)
@@ -847,7 +886,7 @@ def init():
     print(f"""
 ┌───────────────────┐
 │{Back.BLUE}{Fore.LIGHTGREEN_EX } Welcome!          {Style.RESET_ALL}│
-│{Back.BLUE}{Fore.WHITE         } Version 1.0.8     {Style.RESET_ALL}│
+│{Back.BLUE}{Fore.WHITE         } Version 1.0.9     {Style.RESET_ALL}│
 │{Back.BLUE}{Fore.YELLOW        }                   {Style.RESET_ALL}│
 │{Back.BLUE}{Fore.YELLOW        } Let's cum!        {Style.RESET_ALL}│
 └───────────────────┘{Style.RESET_ALL}
